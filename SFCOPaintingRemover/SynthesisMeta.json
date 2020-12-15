@@ -1,6 +1,6 @@
 {
   "Nickname": "SFCOPaintingRemover",
-  "Visibility": "Always Visible",
+  "Visibility": "Visible",
   "OneLineDescription": "Remove all paintings from Snazzy's Furniture and Clutter Overhaul",
   "LongDescription": "",
   "PreferredAutoVersioning": "Default"
