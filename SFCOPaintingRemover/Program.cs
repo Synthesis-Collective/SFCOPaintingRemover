@@ -4,17 +4,18 @@ using System.Linq;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
+using System.Threading.Tasks;
+using Noggog;
 
 namespace SFCOPaintingRemover
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static Task<int> Main(string[] args)
         {
-            return SynthesisPipeline.Instance.Patch<ISkyrimMod, ISkyrimModGetter>(
-                args: args,
-                patcher: RunPatch,
-                userPreferences: new UserPreferences()
+            return SynthesisPipeline.Instance
+                .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
+                .Run(args, new RunPreferences()
                 {
                     ActionsForEmptyArgs = new RunDefaultPatcher()
                     {
@@ -27,14 +28,15 @@ namespace SFCOPaintingRemover
 
         private static ModKey SFCO = ModKey.FromNameAndExtension("Snazzy Furniture and Clutter Overhaul.esp");
 
-        public static void RunPatch(SynthesisState<ISkyrimMod, ISkyrimModGetter> state)
+        public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            if (state.LoadOrder.TryGetValue(SFCO, out (int Index, IModListing<ISkyrimModGetter> Listing) listing))
+            if (state.LoadOrder.TryGetValue(SFCO, out var listing)
+                && listing.Mod != null)
             {
-                var cache = listing.Listing.Mod!.ToImmutableLinkCache();
+                var cache = listing.Mod.ToImmutableLinkCache();
                 foreach (var staticObject in cache.PriorityOrder.WinningOverrides<IStaticGetter>())
                 {
-                    if (staticObject.EditorID != null && staticObject.EditorID.ToLower().Contains("painting"))
+                    if (staticObject.EditorID != null && staticObject.EditorID.ContainsInsensitive("painting"))
                     {
                         var staticObjectCopy = staticObject.DeepCopy();
                         if (staticObjectCopy.Model != null)
