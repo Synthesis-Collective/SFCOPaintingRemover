@@ -47,8 +47,6 @@ namespace SFCOPaintingRemover
                     }
                 }
             }
-            else
-                throw new Exception("ERROR: Snazzy's Furniture and Clutter Overhaul not detected in load order. You need to install SFCO prior to running this patcher!");
         }
     }
 }
