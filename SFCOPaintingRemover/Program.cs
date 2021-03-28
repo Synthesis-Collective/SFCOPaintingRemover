@@ -15,15 +15,8 @@ namespace SFCOPaintingRemover
         {
             return SynthesisPipeline.Instance
                 .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
-                .Run(args, new RunPreferences()
-                {
-                    ActionsForEmptyArgs = new RunDefaultPatcher()
-                    {
-                        IdentifyingModKey = "SFCOPaintingRemover.esp",
-                        TargetRelease = GameRelease.SkyrimSE,
-                        BlockAutomaticExit = true,
-                    }
-                });
+                .SetTypicalOpen(GameRelease.SkyrimSE, "SFCOPaintingRemover.esp")
+                .Run(args);
         }
 
         private static ModKey SFCO = ModKey.FromNameAndExtension("Snazzy Furniture and Clutter Overhaul.esp");
